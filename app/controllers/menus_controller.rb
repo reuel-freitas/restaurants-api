@@ -10,17 +10,22 @@ class MenusController < ApplicationController
   end
 
   def show
-    @menu = Menu.find(params[:id])
+    @menu = Menu.includes(
+      :restaurant,
+      :menu_items,
+      :menu_menu_items
+    ).find(params[:id])
+
     render json: {
       menu: @menu.as_json(include: {
-        restaurant: {},
-        menu_items: {}
+        restaurant: {}
       }).merge(
         menu_items: @menu.menu_items.map do |item|
+          menu_menu_item = @menu.menu_menu_items.find { |mmi| mmi.menu_item_id == item.id }
           {
             id: item.id,
             name: item.name,
-            price: @menu.menu_menu_items.find_by(menu_item: item)&.price
+            price: menu_menu_item&.price&.to_f&.round(2)
           }
         end
       )

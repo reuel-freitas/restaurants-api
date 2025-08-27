@@ -17,6 +17,10 @@ Rails.application.routes.draw do
   resources :menus, only: [ :index, :show ]
   resources :menu_items, only: [ :index, :show ]
 
+  # Import routes for Level 3
+  post "/import", to: "import#create"
+  post "/import/upload", to: "import#upload"
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
