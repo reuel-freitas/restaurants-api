@@ -1,0 +1,79 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: restaurants_postgres
+    environment:
+      POSTGRES_DB: restaurants_api_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      args:
+        RAILS_ENV: development
+        BUNDLE_WITHOUT: ""          # não excluir gems de dev
+        BUNDLE_DEPLOYMENT: "0"
+    container_name: restaurants_api
+    # USER já está no Dockerfile; manter aqui é ok, mas é redundante:
+    # user: "1000:1000"  # Comentado para evitar problemas de permissão
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/restaurants_api_development
+      SOLID_CACHE_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/restaurants_api_development
+      SOLID_QUEUE_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/restaurants_api_development
+      # Se você usa credentials em dev, escolha UMA das opções:
+      # 1) usar a env:
+      # RAILS_MASTER_KEY: "${RAILS_MASTER_KEY}"
+      # 2) ou garantir permissões do arquivo config/master.key (ver passo 3)
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Mantendo o command é ok; o ENTRYPOINT ainda roda antes
+    command: bin/rails server -b 0.0.0.0 -p 3000
+    stdin_open: true
+    tty: true
+
+  jobs:
+    build:
+      context: .
+      args:
+        RAILS_ENV: development
+        BUNDLE_WITHOUT: ""
+        BUNDLE_DEPLOYMENT: "0"
+    container_name: restaurants_jobs
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/restaurants_api_development
+      SOLID_CACHE_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/restaurants_api_development
+      SOLID_QUEUE_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/restaurants_api_development
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: bin/jobs
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+  bundle_cache:
+  logs:
+  tmp:

@@ -29,8 +29,13 @@ class RestaurantSerializerService
       {
         id: item.id,
         name: item.name,
-        price: menu_menu_item&.price&.to_f&.round(2)
+        price: format_price(menu_menu_item&.price)
       }
     end
+  end
+
+  def format_price(price)
+    return nil if price.nil?
+    format("%.2f", price.to_f)
   end
 end

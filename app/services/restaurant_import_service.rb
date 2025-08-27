@@ -1,6 +1,9 @@
 class RestaurantImportService
   attr_reader :logs, :errors, :stats
 
+  # Maximum allowed JSON size in bytes (5MB)
+  MAX_JSON_SIZE = 5 * 1024 * 1024
+
   def initialize(json_data)
     @json_data = json_data
     @logs = []
@@ -24,12 +27,30 @@ class RestaurantImportService
   private
 
   def validate_json_structure
+    validate_json_size
     unless @json_data.is_a?(Hash) && @json_data["restaurants"].is_a?(Array)
       raise ArgumentError, "Invalid JSON structure: expected hash with restaurants array"
     end
 
     if @json_data["restaurants"].empty?
       raise ArgumentError, "Restaurants array cannot be empty"
+    end
+  end
+
+  def validate_json_size
+    json_size = @json_data.to_json.bytesize
+    if json_size > MAX_JSON_SIZE
+      raise ArgumentError, "JSON data size (#{format_file_size(json_size)}) exceeds maximum allowed size of #{format_file_size(MAX_JSON_SIZE)}"
+    end
+  end
+
+  def format_file_size(bytes)
+    if bytes >= 1024 * 1024
+      "#{(bytes / (1024.0 * 1024.0)).round(2)}MB"
+    elsif bytes >= 1024
+      "#{(bytes / 1024.0).round(2)}KB"
+    else
+      "#{bytes}B"
     end
   end
 
