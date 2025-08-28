@@ -12,6 +12,7 @@ This API provides endpoints to manage restaurant data, including menus and menu 
 - **Database**: PostgreSQL
 - **Testing**: RSpec, FactoryBot, Shoulda Matchers
 - **Ruby Version**: 3.2.2
+- **Background Jobs**: Solid Queue with Mission Control Jobs UI
 
 ## Project Structure
 
@@ -168,6 +169,34 @@ The project includes comprehensive testing:
 - Import service has comprehensive error handling tests
 - Integration tests cover complete user workflows
 
+## Background Job Management
+
+The application uses **Solid Queue** for background job processing and **Mission Control Jobs** for a web-based job management interface.
+
+### Mission Control Jobs UI
+
+Access the job management interface at `/jobs` to monitor and manage background jobs:
+
+- **Queues Tab**: View all job queues and their status
+- **In-Progress Jobs**: Monitor currently running jobs
+- **Failed Jobs**: Inspect, retry, or discard failed jobs
+- **Workers Tab**: Monitor job workers and their status
+- **Job Details**: Inspect individual job information and arguments
+
+### Accessing Mission Control Jobs
+
+The interface is protected with HTTP Basic Authentication:
+- **Username**: `test`
+- **Password**: `password`
+
+### Job Management Features
+
+- **Real-time Monitoring**: Live updates of job status and progress
+- **Bulk Operations**: Retry or discard multiple failed jobs at once
+- **Job Filtering**: Filter jobs by queue name, job class, and status
+- **Queue Pausing**: Pause/unpause queues to control job processing
+
+
 ## Performance Testing
 
 The project includes performance testing scripts to evaluate the import service with different JSON sizes:
@@ -179,32 +208,38 @@ These scripts help identify performance characteristics and potential optimizati
 
 ## Getting Started
 
+### Prerequisites
+
+- **Docker Setup**: Docker + Docker Compose (for Option 1)
+- **Manual Setup**: Ruby 3.2.2, PostgreSQL 16+, Bundler (for Option 2)
+
+### Quick Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/reuel-freitas/restaurants-api.git
+   cd restaurants-api
+   ```
+
+2. **Choose your setup method** (see details below)
+
 ### Option 1: Docker (Recommended for Development)
 
 The easiest way to get started is using Docker. This approach ensures consistent environments across different machines and eliminates setup issues.
 
-#### Prerequisites
-- Docker
-- Docker Compose
-
 #### Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd restaurants-api
-   ```
-
-2. **Start the application**
+1. **Start the application**
    ```bash
    docker compose up
    ```
 
-3. **Access the application**
+2. **Access the application**
    - API: http://localhost:3000
    - PostgreSQL: localhost:5433 (username: postgres, password: postgres)
+   - Mission Control Jobs: http://localhost:3000/jobs (test/password)
 
-4. **Stop the application**
+3. **Stop the application**
    ```bash
    docker compose down
    ```
@@ -278,11 +313,8 @@ For developers who prefer to run the application directly on their machine.
    brew services start postgresql   # macOS
    ```
 
-3. **Clone and setup the project**
+3. **Setup the project**
    ```bash
-   git clone https://github.com/reuel-freitas/restaurants-api.git
-   cd restaurants-api
-   
    # Install Ruby dependencies
    bundle install
    
@@ -300,12 +332,13 @@ For developers who prefer to run the application directly on their machine.
    bin/rails server
    
    # In another terminal, start background jobs (optional)
-   bin/rails solid_queue:start
+   bin/jobs
    ```
 
 5. **Access the application**
    - API: http://localhost:3000
    - PostgreSQL: localhost:5432
+   - Mission Control Jobs: http://localhost:3000/jobs (test/password)
 
 #### Manual Setup Commands
 
@@ -486,6 +519,10 @@ curl http://localhost:3000/import/status/abc123
 #     "message": "Job is being processed asynchronously. Check application logs for completion details."
 #   }
 # }
+
+# Monitor jobs via Mission Control Jobs UI
+# Open http://localhost:3000/jobs in your browser
+# Username: test, Password: password
 ```
 
 ### Get Restaurant Data
@@ -528,6 +565,39 @@ The current implementation provides a solid foundation for:
 - Additional data validation rules
 - Export functionality
 - API versioning
+
+## Quick Reference
+
+### Common URLs
+- **API Base**: http://localhost:3000
+- **Mission Control Jobs**: http://localhost:3000/jobs (test/password)
+- **PostgreSQL**: localhost:5433 (Docker) / localhost:5432 (Manual)
+
+### Key Commands
+```bash
+# Docker
+docker compose up          # Start application
+docker compose down        # Stop application
+docker compose logs -f     # View logs
+
+# Rails
+bin/rails server           # Start server
+bin/rails console         # Open console
+bin/rails routes          # View routes
+bin/jobs                  # Start background jobs
+
+# Testing
+bundle exec rspec         # Run all tests
+bundle exec rspec spec/models/  # Run specific tests
+```
+
+### Import Example
+```bash
+# Quick import test
+curl -X POST http://localhost:3000/import \
+  -H "Content-Type: application/json" \
+  -d '{"restaurants":[{"name":"Test","menus":[{"name":"Lunch","menu_items":[{"name":"Burger","price":9.99}]}]}]}'
+```
 
 ## Contributing
 
