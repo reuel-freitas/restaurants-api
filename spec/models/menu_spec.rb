@@ -19,7 +19,7 @@ RSpec.describe Menu, type: :model do
     it 'can have multiple menu items' do
       menu_item1 = create(:menu_item, name: 'Burger')
       menu_item2 = create(:menu_item, name: 'Salad')
-      
+
       MenuMenuItem.create!(menu: menu, menu_item: menu_item1, price: 9.00)
       MenuMenuItem.create!(menu: menu, menu_item: menu_item2, price: 5.00)
 
