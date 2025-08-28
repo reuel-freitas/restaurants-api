@@ -1,13 +1,13 @@
 #!/bin/bash -e
 
-# Enable jemalloc for reduced memory usage and latency.
 if [ -z "${LD_PRELOAD+x}" ]; then
     LD_PRELOAD=$(find /usr/lib -name libjemalloc.so.2 -print -quit)
     export LD_PRELOAD
 fi
 
-# If running the rails server then create or migrate existing database
-# Check if the command contains "rails server" (more flexible than exact match)
+echo "Ensuring gems are installed..."
+bundle install
+
 if echo "$*" | grep -q "rails server"; then
   echo "Running database preparation..."
   ./bin/rails db:prepare

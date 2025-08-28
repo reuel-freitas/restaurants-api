@@ -1,0 +1,760 @@
+---
+openapi: 3.0.1
+info:
+  title: Restaurants API
+  version: v1
+  description: API para gerenciamento de restaurantes, menus e itens de menu
+  contact:
+    name: API Support
+    email: support@restaurants-api.com
+paths:
+  "/import":
+    post:
+      summary: Envia dados JSON para importação
+      tags:
+      - Import
+      description: Envia dados JSON para importação de restaurantes, menus e itens
+        de menu
+      parameters: []
+      responses:
+        '202':
+          description: job de importação enfileirado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  job_id:
+                    type: string
+                  status:
+                    type: string
+                  check_status_command:
+                    type: string
+        '400':
+          description: formato JSON inválido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                  details:
+                    type: string
+        '500':
+          description: erro interno do servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                  details:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                restaurants:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      menus:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            menu_items:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                  price:
+                                    type: number
+                                    format: float
+  "/import/upload":
+    post:
+      summary: Faz upload de arquivo JSON para importação
+      tags:
+      - Import
+      description: Faz upload de um arquivo JSON para importação de restaurantes,
+        menus e itens de menu
+      parameters: []
+      responses:
+        '202':
+          description: job de importação enfileirado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  job_id:
+                    type: string
+                  status:
+                    type: string
+                  check_status_command:
+                    type: string
+        '400':
+          description: formato JSON inválido no arquivo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                  details:
+                    type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+        required: true
+        description: Arquivo JSON para importação
+  "/import/status/{job_id}":
+    get:
+      summary: Verifica o status de um job de importação
+      tags:
+      - Import
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        description: ID do job de importação
+        schema:
+          type: string
+      responses:
+        '200':
+          description: status do job encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  job_id:
+                    type: string
+                  status:
+                    type: object
+                    properties:
+                      state:
+                        type: string
+                      message:
+                        type: string
+                      results:
+                        type: object
+                        nullable: true
+        '400':
+          description: ID do job não fornecido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+        '404':
+          description: job não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+  "/menu_items":
+    get:
+      summary: Lista todos os itens de menu
+      tags:
+      - Menu Items
+      description: Retorna uma lista de todos os itens de menu disponíveis
+      responses:
+        '200':
+          description: itens de menu encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu_items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+  "/menu_items/{id}":
+    get:
+      summary: Recupera um item de menu específico
+      tags:
+      - Menu Items
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID do item de menu
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: item de menu encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu_item:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      menus:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+        '404':
+          description: item de menu não encontrado
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/menus":
+    get:
+      summary: Lista todos os menus
+      tags:
+      - Menus
+      description: Retorna uma lista de todos os menus disponíveis
+      responses:
+        '200':
+          description: menus encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menus:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        restaurant_id:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+  "/menus/{id}":
+    get:
+      summary: Recupera um menu específico
+      tags:
+      - Menus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID do menu
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: menu encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      restaurant_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      restaurant:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                      menu_items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            price:
+                              type: number
+                              format: float
+        '404':
+          description: menu não encontrado
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/restaurants/{restaurant_id}/menus":
+    get:
+      summary: Lista todos os menus de um restaurante específico
+      tags:
+      - Restaurants
+      parameters:
+      - name: restaurant_id
+        in: path
+        required: true
+        description: ID do restaurante
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: menus encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menus:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        restaurant_id:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+  "/restaurants/{restaurant_id}/menus/{menu_id}":
+    get:
+      summary: Recupera um menu específico de um restaurante
+      tags:
+      - Restaurant Menus
+      parameters:
+      - name: restaurant_id
+        in: path
+        required: true
+        description: ID do restaurante
+        schema:
+          type: integer
+      - name: menu_id
+        in: path
+        required: true
+        description: ID do menu
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: menu encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      restaurant_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      restaurant:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                      menu_items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            price:
+                              type: number
+                              format: float
+  "/restaurants/{restaurant_id}/menus/{menu_id}/menu_items":
+    get:
+      summary: Lista todos os itens de menu de um menu específico de um restaurante
+      tags:
+      - Restaurant Menus
+      parameters:
+      - name: restaurant_id
+        in: path
+        required: true
+        description: ID do restaurante
+        schema:
+          type: integer
+      - name: menu_id
+        in: path
+        required: true
+        description: ID do menu
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: itens de menu encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu_items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+  "/restaurants":
+    get:
+      summary: Lista todos os restaurantes
+      tags:
+      - Restaurants
+      description: Retorna uma lista de todos os restaurantes disponíveis
+      responses:
+        '200':
+          description: restaurantes encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restaurants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+  "/restaurants/{id}":
+    get:
+      summary: Recupera um restaurante específico
+      tags:
+      - Restaurants
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID do restaurante
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: restaurante encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restaurant:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      menus:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            restaurant_id:
+                              type: integer
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            menu_items:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  price:
+                                    type: number
+                                    format: float
+        '404':
+          description: restaurante não encontrado
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/restaurants/{restaurant_id}/menu_items":
+    get:
+      summary: Lista todos os itens de menu de um restaurante específico
+      tags:
+      - Restaurants
+      parameters:
+      - name: restaurant_id
+        in: path
+        required: true
+        description: ID do restaurante
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: itens de menu encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu_items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+servers:
+- url: http://localhost:3000
+  description: Development server
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: api.restaurants.com
+      description: Production API server
+components:
+  schemas:
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    restaurant:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+    menu:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        restaurant_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - restaurant_id
+    menu_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+    menu_menu_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+      required:
+      - id
+      - name
+      - price
+    import_request:
+      type: object
+      properties:
+        restaurants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/restaurant_import"
+      required:
+      - restaurants
+    restaurant_import:
+      type: object
+      properties:
+        name:
+          type: string
+        menus:
+          type: array
+          items:
+            "$ref": "#/components/schemas/menu_import"
+      required:
+      - name
+    menu_import:
+      type: object
+      properties:
+        name:
+          type: string
+        menu_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/menu_item_import"
+      required:
+      - name
+    menu_item_import:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+      required:
+      - name
+      - price
