@@ -19,10 +19,17 @@ module RestaurantsApi
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
-    # in config/environments, which are processed later.
+    # config/environments/*.rb, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Configure static file serving for coverage reports only
+    config.public_file_server.enabled = true
+
+    # Add custom middleware for coverage assets
+    require_relative "../lib/coverage_assets_middleware"
+    config.middleware.use CoverageAssetsMiddleware
 
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.

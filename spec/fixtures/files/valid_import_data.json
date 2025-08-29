@@ -1,0 +1,16 @@
+{
+  "restaurants": [
+    {
+      "name": "Poppo's Cafe",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            { "name": "Burger", "price": 9.00 },
+            { "name": "Small Salad", "price": 5.00 }
+          ]
+        }
+      ]
+    }
+  ]
+}

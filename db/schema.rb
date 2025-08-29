@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_27_184710) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_28_191124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,6 +27,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_184710) do
     t.decimal "price", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["menu_id", "menu_item_id"], name: "index_menu_menu_items_on_menu_id_and_menu_item_id", unique: true
     t.index ["menu_id"], name: "index_menu_menu_items_on_menu_id"
     t.index ["menu_item_id"], name: "index_menu_menu_items_on_menu_item_id"
   end
@@ -36,6 +37,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_184710) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "restaurant_id", null: false
+    t.index ["restaurant_id", "name"], name: "index_menus_on_restaurant_id_and_name", unique: true
     t.index ["restaurant_id"], name: "index_menus_on_restaurant_id"
   end
 
@@ -43,6 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_184710) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_restaurants_on_name", unique: true
   end
 
   create_table "solid_cache_entries", force: :cascade do |t|

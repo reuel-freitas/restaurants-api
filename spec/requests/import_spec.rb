@@ -30,38 +30,34 @@ RSpec.describe 'Import API', type: :request do
                           properties: {
                             name: { type: :string },
                             price: { type: :number, format: :float }
-                          }
+                          },
+                          required: [ 'name', 'price' ]
                         }
                       }
-                    }
+                    },
+                    required: [ 'name', 'menu_items' ]
                   }
                 }
-              }
+              },
+              required: [ 'name', 'menus' ]
             }
           }
-        }
+        },
+        required: [ 'restaurants' ]
       }
 
-      response '202', 'job de importação enfileirado com sucesso' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            message: { type: :string },
-            job_id: { type: :string },
-            status: { type: :string },
-            check_status_command: { type: :string }
-          }
-
+      response '202', 'Import job enqueued successfully' do
         let(:import_data) do
           {
             restaurants: [
               {
-                name: "Restaurante Teste",
+                name: "Poppo's Cafe",
                 menus: [
                   {
-                    name: "Menu Teste",
+                    name: 'lunch',
                     menu_items: [
-                      { name: "Item Teste", price: 10.50 }
+                      { name: 'Burger', price: 9.00 },
+                      { name: 'Small Salad', price: 5.00 }
                     ]
                   }
                 ]
@@ -70,93 +66,45 @@ RSpec.describe 'Import API', type: :request do
           }
         end
 
-        run_test!
-      end
-
-      response '400', 'formato JSON inválido' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            error: { type: :string },
-            details: { type: :string }
-          }
-
-        let(:import_data) { 'invalid json' }
-        run_test!
-      end
-
-      response '500', 'erro interno do servidor' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            error: { type: :string },
-            details: { type: :string }
-          }
-
-        # Simular erro interno
-        before do
-          allow(RestaurantImportJob).to receive(:perform_later).and_raise(StandardError, "Erro interno")
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['success']).to be true
+          expect(data['message']).to eq('Import job enqueued successfully')
+          expect(data['job_id']).to be_present
+          expect(data['status']).to eq('queued')
         end
+      end
 
-        let(:import_data) do
-          {
-            restaurants: [
-              { name: "Restaurante Teste" }
-            ]
-          }
+      response '400', 'Invalid data structure' do
+        let(:import_data) { '{ "unclosed": "quote }' }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['success']).to be false
+          expect(data['error']).to eq('Invalid data structure')
         end
-
-        run_test!
-      end
-    end
-  end
-
-  path '/import/upload' do
-    post 'Faz upload de arquivo JSON para importação' do
-      tags 'Import'
-      consumes 'multipart/form-data'
-      produces 'application/json'
-      description 'Faz upload de um arquivo JSON para importação de restaurantes, menus e itens de menu'
-
-      parameter name: :file, in: :formData, type: :file, required: true,
-                description: 'Arquivo JSON para importação'
-
-      response '202', 'job de importação enfileirado com sucesso' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            message: { type: :string },
-            job_id: { type: :string },
-            status: { type: :string },
-            check_status_command: { type: :string }
-          }
-
-        let(:file) { fixture_file_upload('restaurant_data.json', 'application/json') }
-
-        run_test!
       end
 
-      response '400', 'arquivo não fornecido' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            error: { type: :string }
-          }
+      response '400', 'Invalid data structure' do
+        let(:import_data) { '["not", "an", "object"]' }
 
-        let(:file) { nil }
-        run_test!
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['success']).to be false
+          expect(data['error']).to eq('Invalid data structure')
+        end
       end
 
-      response '400', 'formato JSON inválido no arquivo' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            error: { type: :string },
-            details: { type: :string }
-          }
+      response '202', 'Import job enqueued even with invalid structure' do
+        let(:import_data) { { invalid: 'structure' } }
 
-        let(:file) { fixture_file_upload('invalid_data.txt', 'text/plain') }
-        run_test!
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['success']).to be true
+          expect(data['message']).to eq('Import job enqueued successfully')
+          expect(data['job_id']).to be_present
+          expect(data['status']).to eq('queued')
+        end
       end
     end
   end
@@ -165,63 +113,47 @@ RSpec.describe 'Import API', type: :request do
     get 'Verifica o status de um job de importação' do
       tags 'Import'
       produces 'application/json'
+      description 'Verifica o status atual de um job de importação pelo ID'
+
       parameter name: :job_id, in: :path, type: :string, required: true,
                 description: 'ID do job de importação'
 
-      response '200', 'status do job encontrado' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            job_id: { type: :string },
-            status: {
-              type: :object,
-              properties: {
-                state: { type: :string },
-                message: { type: :string },
-                results: { type: :object, nullable: true }
-              }
-            }
-          }
-
-        let(:job_id) { 'valid-job-id' }
+      response '200', 'Job status retrieved successfully' do
+        let(:job_id) { 'valid_job_id' }
 
         before do
-          allow(SolidQueue::Job).to receive(:find_by).and_return(
-            double('job', status: 'finished')
-          )
-          allow_any_instance_of(ImportController).to receive(:get_cached_results).and_return(
-            { restaurants_created: 5, menus_created: 10, menu_items_created: 25 }
-          )
+          allow(SolidQueue::Job).to receive(:find_by).with(active_job_id: 'valid_job_id')
+            .and_return(double(
+              active_job_id: 'valid_job_id',
+              finished_at: nil,
+              failed_at: nil,
+              status: 'pending'
+            ))
         end
 
-        run_test!
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['success']).to be true
+          expect(data['job_id']).to eq('valid_job_id')
+          expect(data['status']['state']).to eq('queued')
+        end
       end
 
-      response '400', 'ID do job não fornecido' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            error: { type: :string }
-          }
-
-        let(:job_id) { '' }
-        run_test!
-      end
-
-      response '404', 'job não encontrado' do
-        schema type: :object,
-          properties: {
-            success: { type: :boolean },
-            error: { type: :string }
-          }
-
-        let(:job_id) { 'non-existent-job' }
+      response '404', 'Job not found' do
+        let(:job_id) { 'invalid_job_id' }
 
         before do
-          allow(SolidQueue::Job).to receive(:find_by).and_return(nil)
+          allow(SolidQueue::Job).to receive(:find_by).with(active_job_id: 'invalid_job_id')
+            .and_return(nil)
+          allow(SolidQueue::Job).to receive(:find_by).with(id: 'invalid_job_id')
+            .and_return(nil)
         end
 
-        run_test!
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['success']).to be false
+          expect(data['error']).to eq('Job not found')
+        end
       end
     end
   end

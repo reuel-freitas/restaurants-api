@@ -22,27 +22,34 @@ RSpec.describe ImportController, type: :controller do
 
   describe 'POST #create' do
     context 'with valid JSON in request body' do
-      it 'imports data successfully' do
+      it 'enqueues import job successfully' do
+        expect(RestaurantImportJob).to receive(:perform_later).with(valid_json_data).and_return(
+          double(job_id: 'job_123')
+        )
+
         post :create, body: valid_json_data.to_json, format: :json
 
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:accepted)
 
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be true
-        expect(json_response['data']['restaurants_processed']).to eq(1)
-        expect(json_response['data']['menus_processed']).to eq(1)
-        expect(json_response['data']['items_processed']).to eq(2)
+        expect(json_response['message']).to eq('Import job enqueued successfully')
+        expect(json_response['job_id']).to eq('job_123')
+        expect(json_response['status']).to eq('queued')
+        expect(json_response['check_status_command']).to include('job_123')
       end
 
-      it 'returns detailed logs' do
+      it 'returns job information' do
+        expect(RestaurantImportJob).to receive(:perform_later).with(valid_json_data).and_return(
+          double(job_id: 'job_456')
+        )
+
         post :create, body: valid_json_data.to_json, format: :json
 
         json_response = JSON.parse(response.body)
-        expect(json_response['logs']).to be_present
-        expect(json_response['logs'].length).to be > 0
-
-        log_types = json_response['logs'].map { |log| log['entity_type'] }
-        expect(log_types).to include('restaurant', 'menu', 'menu_item')
+        expect(json_response['success']).to be true
+        expect(json_response['job_id']).to eq('job_456')
+        expect(json_response['status']).to eq('queued')
       end
     end
 
@@ -65,33 +72,49 @@ RSpec.describe ImportController, type: :controller do
     end
 
     context 'with invalid data structure' do
-      it 'returns unprocessable entity for invalid structure' do
+      it 'enqueues job even with invalid structure (validation happens in job)' do
         invalid_data = { 'invalid' => 'structure' }
+
+        expect(RestaurantImportJob).to receive(:perform_later).with(invalid_data).and_return(
+          double(job_id: 'job_789')
+        )
+
         post :create, body: invalid_data.to_json, format: :json
 
-        expect(response).to have_http_status(:unprocessable_content)
+        expect(response).to have_http_status(:accepted)
 
         json_response = JSON.parse(response.body)
-        expect(json_response['success']).to be false
-        expect(json_response['errors']).to be_present
+        expect(json_response['success']).to be true
+        expect(json_response['status']).to eq('queued')
       end
     end
   end
 
   describe 'POST #upload' do
     context 'with valid file upload' do
-      it 'imports data from uploaded file' do
+      it 'enqueues import job from uploaded file' do
         file = Tempfile.new([ 'test', '.json' ])
         file.write(valid_json_data.to_json)
         file.rewind
 
+        # Now the job receives the file path, not the JSON content
+        expect(RestaurantImportJob).to receive(:perform_later) do |file_path|
+          # Verify it's a file path string
+          expect(file_path).to be_a(String)
+          expect(file_path).to include('tmp/imports/import_')
+          expect(File.exist?(file_path)).to be true
+
+          double(job_id: 'job_file_123')
+        end
+
         post :upload, params: { file: Rack::Test::UploadedFile.new(file.path, 'application/json') }
 
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:accepted)
 
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be true
-        expect(json_response['data']['restaurants_processed']).to eq(1)
+        expect(json_response['message']).to eq('Import job enqueued successfully')
+        expect(json_response['job_id']).to eq('job_file_123')
 
         file.close
         file.unlink
@@ -132,7 +155,7 @@ RSpec.describe ImportController, type: :controller do
 
   describe 'error handling' do
     it 'handles unexpected errors gracefully' do
-      allow_any_instance_of(RestaurantImportService).to receive(:import).and_raise(StandardError, 'Unexpected error')
+      allow(RestaurantImportJob).to receive(:perform_later).and_raise(StandardError, 'Unexpected error')
 
       post :create, body: valid_json_data.to_json, format: :json
 
@@ -140,7 +163,7 @@ RSpec.describe ImportController, type: :controller do
 
       json_response = JSON.parse(response.body)
       expect(json_response['success']).to be false
-      expect(json_response['error']).to eq('Import failed')
+      expect(json_response['error']).to eq('Failed to enqueue import job')
       expect(json_response['details']).to eq('Unexpected error')
     end
   end

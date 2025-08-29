@@ -1,0 +1,557 @@
+{
+  "restaurants": [
+    {
+      "name": "Poppo's Cafe",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Burger", "price": 9.00},
+            {"name": "Small Salad", "price": 5.00},
+            {"name": "Chicken Sandwich", "price": 8.50},
+            {"name": "French Fries", "price": 3.50},
+            {"name": "Onion Rings", "price": 4.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Burger", "price": 15.00},
+            {"name": "Large Salad", "price": 8.00},
+            {"name": "Steak", "price": 25.00},
+            {"name": "Grilled Salmon", "price": 22.00},
+            {"name": "Pasta Carbonara", "price": 18.00}
+          ]
+        },
+        {
+          "name": "breakfast",
+          "menu_items": [
+            {"name": "Eggs Benedict", "price": 12.00},
+            {"name": "Pancakes", "price": 8.50},
+            {"name": "Omelette", "price": 10.00},
+            {"name": "French Toast", "price": 9.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Casa del Poppo",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Chicken Wings", "price": 9.00},
+            {"name": "Burger", "price": 9.00},
+            {"name": "Chicken Wings", "price": 9.00},
+            {"name": "Caesar Salad", "price": 7.50},
+            {"name": "Mozzarella Sticks", "price": 6.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Mega \"Burger\"", "price": 22.00},
+            {"name": "Lobster Mac & Cheese", "price": 31.00},
+            {"name": "Ribeye Steak", "price": 35.00},
+            {"name": "Truffle Pasta", "price": 28.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sushi Master",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "California Roll", "price": 12.00},
+            {"name": "Spicy Tuna Roll", "price": 14.00},
+            {"name": "Salmon Nigiri", "price": 8.00},
+            {"name": "Miso Soup", "price": 4.00},
+            {"name": "Edamame", "price": 5.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Dragon Roll", "price": 18.00},
+            {"name": "Rainbow Roll", "price": 16.00},
+            {"name": "Unagi Don", "price": 22.00},
+            {"name": "Sashimi Platter", "price": 28.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pizza Palace",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Margherita Pizza", "price": 14.00},
+            {"name": "Pepperoni Pizza", "price": 16.00},
+            {"name": "Hawaiian Pizza", "price": 17.00},
+            {"name": "Garlic Bread", "price": 5.00},
+            {"name": "Caesar Salad", "price": 8.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Supreme Pizza", "price": 20.00},
+            {"name": "BBQ Chicken Pizza", "price": 19.00},
+            {"name": "Truffle Pizza", "price": 24.00},
+            {"name": "Tiramisu", "price": 8.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Taco Fiesta",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Beef Taco", "price": 3.50},
+            {"name": "Chicken Taco", "price": 3.00},
+            {"name": "Fish Taco", "price": 4.00},
+            {"name": "Guacamole", "price": 2.50},
+            {"name": "Chips & Salsa", "price": 3.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Carne Asada", "price": 15.00},
+            {"name": "Enchiladas", "price": 12.00},
+            {"name": "Fajitas", "price": 18.00},
+            {"name": "Churros", "price": 6.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Burger Joint",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Classic Burger", "price": 11.00},
+            {"name": "Cheese Burger", "price": 12.50},
+            {"name": "Bacon Burger", "price": 13.50},
+            {"name": "Veggie Burger", "price": 10.00},
+            {"name": "Sweet Potato Fries", "price": 4.50}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Double Burger", "price": 16.00},
+            {"name": "Mushroom Swiss Burger", "price": 15.00},
+            {"name": "BBQ Burger", "price": 14.50},
+            {"name": "Onion Rings", "price": 5.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Noodle House",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Pad Thai", "price": 13.00},
+            {"name": "Beef Noodles", "price": 14.00},
+            {"name": "Chicken Noodles", "price": 12.00},
+            {"name": "Spring Rolls", "price": 6.00},
+            {"name": "Wonton Soup", "price": 5.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Seafood Noodles", "price": 18.00},
+            {"name": "Duck Noodles", "price": 20.00},
+            {"name": "Curry Noodles", "price": 16.00},
+            {"name": "Mango Sticky Rice", "price": 7.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Steak House",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Steak Sandwich", "price": 18.00},
+            {"name": "Steak Salad", "price": 16.00},
+            {"name": "Beef Sliders", "price": 14.00},
+            {"name": "Loaded Baked Potato", "price": 6.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Ribeye Steak", "price": 45.00},
+            {"name": "Filet Mignon", "price": 48.00},
+            {"name": "T-Bone Steak", "price": 52.00},
+            {"name": "Lobster Tail", "price": 38.00},
+            {"name": "Chocolate Lava Cake", "price": 12.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Seafood Shack",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Fish & Chips", "price": 15.00},
+            {"name": "Shrimp Po' Boy", "price": 16.00},
+            {"name": "Crab Cake Sandwich", "price": 17.00},
+            {"name": "Clam Chowder", "price": 8.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Lobster Roll", "price": 28.00},
+            {"name": "Grilled Salmon", "price": 26.00},
+            {"name": "Seafood Paella", "price": 32.00},
+            {"name": "Key Lime Pie", "price": 9.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vegan Garden",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Buddha Bowl", "price": 14.00},
+            {"name": "Quinoa Salad", "price": 12.00},
+            {"name": "Veggie Wrap", "price": 11.00},
+            {"name": "Smoothie Bowl", "price": 10.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Mushroom Risotto", "price": 18.00},
+            {"name": "Cauliflower Steak", "price": 16.00},
+            {"name": "Lentil Curry", "price": 15.00},
+            {"name": "Chocolate Avocado Mousse", "price": 8.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Coffee Corner",
+      "menus": [
+        {
+          "name": "breakfast",
+          "menu_items": [
+            {"name": "Espresso", "price": 3.50},
+            {"name": "Cappuccino", "price": 4.50},
+            {"name": "Latte", "price": 4.00},
+            {"name": "Croissant", "price": 3.00},
+            {"name": "Blueberry Muffin", "price": 3.50}
+          ]
+        },
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Turkey Sandwich", "price": 9.00},
+            {"name": "Grilled Cheese", "price": 7.00},
+            {"name": "Soup of the Day", "price": 6.00},
+            {"name": "Chocolate Chip Cookie", "price": 2.50}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ice Cream Parlor",
+      "menus": [
+        {
+          "name": "desserts",
+          "dishes": [
+            {"name": "Vanilla Ice Cream", "price": 4.00},
+            {"name": "Chocolate Ice Cream", "price": 4.00},
+            {"name": "Strawberry Ice Cream", "price": 4.00},
+            {"name": "Cookie Dough", "price": 4.50},
+            {"name": "Mint Chocolate Chip", "price": 4.00}
+          ]
+        },
+        {
+          "name": "sundaes",
+          "dishes": [
+            {"name": "Hot Fudge Sundae", "price": 7.00},
+            {"name": "Banana Split", "price": 8.50},
+            {"name": "Brownie Sundae", "price": 7.50},
+            {"name": "Caramel Sundae", "price": 6.50}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BBQ Pit",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Pulled Pork Sandwich", "price": 12.00},
+            {"name": "BBQ Chicken", "price": 13.00},
+            {"name": "Brisket Sandwich", "price": 15.00},
+            {"name": "Coleslaw", "price": 3.00},
+            {"name": "Baked Beans", "price": 4.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Full Rack of Ribs", "price": 28.00},
+            {"name": "BBQ Platter", "price": 22.00},
+            {"name": "Smoked Turkey", "price": 18.00},
+            {"name": "Cornbread", "price": 3.50}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Thai Spice",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Green Curry", "price": 14.00},
+            {"name": "Red Curry", "price": 14.00},
+            {"name": "Pad See Ew", "price": 13.00},
+            {"name": "Tom Yum Soup", "price": 8.00},
+            {"name": "Thai Iced Tea", "price": 4.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Massaman Curry", "price": 16.00},
+            {"name": "Panang Curry", "price": 16.00},
+            {"name": "Duck Curry", "price": 20.00},
+            {"name": "Mango Sticky Rice", "price": 7.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Indian Palace",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Butter Chicken", "price": 16.00},
+            {"name": "Chicken Tikka Masala", "price": 17.00},
+            {"name": "Palak Paneer", "price": 14.00},
+            {"name": "Naan Bread", "price": 3.00},
+            {"name": "Basmati Rice", "price": 4.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Lamb Biryani", "price": 22.00},
+            {"name": "Goat Curry", "price": 20.00},
+            {"name": "Tandoori Mixed Grill", "price": 25.00},
+            {"name": "Gulab Jamun", "price": 6.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Greek Taverna",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Gyro", "price": 11.00},
+            {"name": "Souvlaki", "price": 12.00},
+            {"name": "Greek Salad", "price": 10.00},
+            {"name": "Hummus", "price": 6.00},
+            {"name": "Pita Bread", "price": 2.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Moussaka", "price": 18.00},
+            {"name": "Pastitsio", "price": 17.00},
+            {"name": "Grilled Octopus", "price": 24.00},
+            {"name": "Baklava", "price": 7.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "French Bistro",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Croque Monsieur", "price": 13.00},
+            {"name": "Quiche Lorraine", "price": 12.00},
+            {"name": "French Onion Soup", "price": 9.00},
+            {"name": "Escargot", "price": 14.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Coq au Vin", "price": 26.00},
+            {"name": "Beef Bourguignon", "price": 28.00},
+            {"name": "Duck Confit", "price": 30.00},
+            {"name": "Crème Brûlée", "price": 9.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Korean BBQ",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Bibimbap", "price": 15.00},
+            {"name": "Bulgogi", "price": 16.00},
+            {"name": "Kimchi Jjigae", "price": 13.00},
+            {"name": "Korean Fried Chicken", "price": 14.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Galbi", "price": 28.00},
+            {"name": "Samgyeopsal", "price": 25.00},
+            {"name": "Japchae", "price": 18.00},
+            {"name": "Patbingsu", "price": 8.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mexican Cantina",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Street Tacos", "price": 8.00},
+            {"name": "Quesadilla", "price": 10.00},
+            {"name": "Burrito", "price": 11.00},
+            {"name": "Horchata", "price": 3.50}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Mole Poblano", "price": 18.00},
+            {"name": "Chiles Rellenos", "price": 16.00},
+            {"name": "Pescado Veracruzano", "price": 22.00},
+            {"name": "Flan", "price": 6.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Italian Trattoria",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Margherita Pizza", "price": 16.00},
+            {"name": "Spaghetti Carbonara", "price": 17.00},
+            {"name": "Chicken Parmigiana", "price": 18.00},
+            {"name": "Bruschetta", "price": 8.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Osso Buco", "price": 32.00},
+            {"name": "Risotto ai Funghi", "price": 24.00},
+            {"name": "Saltimbocca", "price": 26.00},
+            {"name": "Tiramisu", "price": 10.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Japanese Izakaya",
+      "menus": [
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Tonkatsu", "price": 16.00},
+            {"name": "Tempura Udon", "price": 15.00},
+            {"name": "Karaage", "price": 12.00},
+            {"name": "Miso Soup", "price": 4.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "menu_items": [
+            {"name": "Wagyu Beef", "price": 45.00},
+            {"name": "Sukiyaki", "price": 28.00},
+            {"name": "Yakitori", "price": 22.00},
+            {"name": "Matcha Ice Cream", "price": 7.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mediterranean Grill",
+      "menus": [
+        {
+          "name": "lunch",
+          "dishes": [
+            {"name": "Falafel Wrap", "price": 11.00},
+            {"name": "Shawarma", "price": 12.00},
+            {"name": "Tabouleh", "price": 8.00},
+            {"name": "Baba Ganoush", "price": 7.00}
+          ]
+        },
+        {
+          "name": "dinner",
+          "dishes": [
+            {"name": "Mixed Grill", "price": 24.00},
+            {"name": "Lamb Shank", "price": 26.00},
+            {"name": "Seafood Paella", "price": 28.00},
+            {"name": "Baklava", "price": 7.00}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "American Diner",
+      "menus": [
+        {
+          "name": "breakfast",
+          "menu_items": [
+            {"name": "Pancakes", "price": 9.00},
+            {"name": "Waffles", "price": 10.00},
+            {"name": "Eggs & Bacon", "price": 11.00},
+            {"name": "Hash Browns", "price": 4.00}
+          ]
+        },
+        {
+          "name": "lunch",
+          "menu_items": [
+            {"name": "Club Sandwich", "price": 13.00},
+            {"name": "Chicken Fried Steak", "price": 15.00},
+            {"name": "Pot Roast", "price": 16.00},
+            {"name": "Apple Pie", "price": 6.00}
+          ]
+        }
+      ]
+    }
+  ]
+}

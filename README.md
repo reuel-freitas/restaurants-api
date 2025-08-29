@@ -2,210 +2,6 @@
 
 A Rails API for restaurant menu management with support for multiple restaurants, menus, and menu items.
 
-## Overview
-
-This API provides endpoints to manage restaurant data, including menus and menu items. It supports JSON import functionality for bulk data operations and maintains data integrity through database-level constraints.
-
-## Technology Stack
-
-- **Framework**: Ruby on Rails 8.0
-- **Database**: PostgreSQL
-- **Testing**: RSpec, FactoryBot, Shoulda Matchers
-- **Ruby Version**: 3.2.2
-- **Background Jobs**: Solid Queue with Mission Control Jobs UI
-
-## Project Structure
-
-```
-app/
-├── controllers/
-│   ├── restaurants_controller.rb
-│   ├── menus_controller.rb
-│   ├── menu_items_controller.rb
-│   └── import_controller.rb
-├── models/
-│   ├── restaurant.rb
-│   ├── menu.rb
-│   ├── menu_item.rb
-│   └── menu_menu_item.rb
-└── services/
-    └── restaurant_import_service.rb
-```
-
-## Database Schema
-
-### Tables
-
-- **restaurants**: Stores restaurant information
-- **menus**: Stores menu information, belongs to a restaurant
-- **menu_items**: Stores menu item information (globally unique names)
-- **menu_menu_items**: Join table between menus and menu items with pricing
-
-### Key Constraints
-
-- Menu item names are globally unique at the database level
-- Menu names are unique per restaurant
-- Menu-item combinations are unique within a menu
-- All foreign key relationships are properly enforced
-
-## API Endpoints
-
-### Restaurants
-
-- `GET /restaurants` - List all restaurants
-- `GET /restaurants/:id` - Get restaurant details with menus and items
-- `GET /restaurants/:id/menus` - Get all menus for a restaurant
-- `GET /restaurants/:id/menu_items` - Get all menu items for a restaurant
-
-### Menus
-
-- `GET /menus` - List all menus
-- `GET /menus/:id` - Get menu details with items and prices
-
-### Menu Items
-
-- `GET /menu_items` - List all menu items
-- `GET /menu_items/:id` - Get menu item details
-
-### Import
-
-- `POST /import` - Import JSON data from request body (asynchronous)
-- `POST /import/upload` - Import JSON data from file upload (asynchronous)
-- `GET /import/status/:job_id` - Basic job status (processing indicator)
-
-## Implementation Levels
-
-### Level 1: Basic Menu Management
-
-**Features Implemented:**
-- Menu and MenuItem models with one-to-many relationship
-- Basic CRUD endpoints for menus and menu items
-- Price handling through the join table
-- Comprehensive unit tests for models and controllers
-
-**Key Design Decisions:**
-- Used join table (menu_menu_items) to handle pricing variations
-- Price belongs to the relationship, not the menu item itself
-- Basic validation and error handling
-
-### Level 2: Multiple Restaurants and Menus
-
-**Features Implemented:**
-- Restaurant model with multiple menus
-- Nested routing structure for better API organization
-- Database-level uniqueness constraints
-- Support for menu items appearing in multiple menus with different prices
-
-**Key Design Decisions:**
-- Nested resources for intuitive API structure
-- Database-level uniqueness for data integrity
-- Maintained backward compatibility with global endpoints
-
-### Level 3: JSON Import System
-
-**Features Implemented:**
-- HTTP endpoints for JSON import (body and file upload)
-- Service object for business logic separation
-- Transaction safety with automatic rollback on errors
-- Duplicate consolidation within menus
-- Comprehensive logging and error handling
-- Support for both 'menu_items' and 'dishes' keys in JSON
-
-**Key Design Decisions:**
-- Service object pattern for complex import logic
-- Transaction safety prevents partial imports
-- Flexible JSON key mapping for future extensibility
-- Idempotent operations (re-importing updates existing records)
-
-## JSON Import Format
-
-The API accepts JSON data in the following format:
-
-```json
-{
-  "restaurants": [
-    {
-      "name": "Restaurant Name",
-      "menus": [
-        {
-          "name": "Menu Name",
-          "menu_items": [
-            {
-              "name": "Item Name",
-              "price": 9.99
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Alternative Keys:**
-- `dishes` can be used instead of `menu_items`
-
-**Import Features:**
-- Automatic duplicate consolidation within menus
-- Transaction safety with rollback on errors
-- Detailed logging for each operation
-- Error reporting with specific failure reasons
-- **File size limit**: Maximum 5MB per import (project design decision)
-- **Asynchronous processing**: Background job processing for better performance
-- **Real-time status**: Check import progress via job ID
-
-## Testing
-
-The project includes comprehensive testing:
-
-- **Unit Tests**: Model validations, associations, and business logic
-- **Controller Tests**: API endpoint behavior and error handling
-- **Integration Tests**: End-to-end workflow testing
-- **Service Tests**: Import service functionality and edge cases
-
-**Test Coverage:**
-- All models have validation and association tests
-- All controllers have request and response tests
-- Import service has comprehensive error handling tests
-- Integration tests cover complete user workflows
-
-## Background Job Management
-
-The application uses **Solid Queue** for background job processing and **Mission Control Jobs** for a web-based job management interface.
-
-### Mission Control Jobs UI
-
-Access the job management interface at `/jobs` to monitor and manage background jobs:
-
-- **Queues Tab**: View all job queues and their status
-- **In-Progress Jobs**: Monitor currently running jobs
-- **Failed Jobs**: Inspect, retry, or discard failed jobs
-- **Workers Tab**: Monitor job workers and their status
-- **Job Details**: Inspect individual job information and arguments
-
-### Accessing Mission Control Jobs
-
-The interface is protected with HTTP Basic Authentication:
-- **Username**: `test`
-- **Password**: `password`
-
-### Job Management Features
-
-- **Real-time Monitoring**: Live updates of job status and progress
-- **Bulk Operations**: Retry or discard multiple failed jobs at once
-- **Job Filtering**: Filter jobs by queue name, job class, and status
-- **Queue Pausing**: Pause/unpause queues to control job processing
-
-
-## Performance Testing
-
-The project includes performance testing scripts to evaluate the import service with different JSON sizes:
-
-- **`quick_performance_test.rb`**: Quick test for different file sizes (100KB to 4MB)
-- **`benchmark_upload_performance.rb`**: Comprehensive benchmark with detailed analysis
-
-These scripts help identify performance characteristics and potential optimizations for the import service.
-
 ## Getting Started
 
 ### Prerequisites
@@ -473,73 +269,209 @@ bundle install --platform x86_64-linux
 # Check for system dependencies
 sudo apt-get install build-essential libpq-dev
 ```
+
+## Overview
+
+This API provides endpoints to manage restaurant data, including menus and menu items. It supports JSON import functionality for bulk data operations and maintains data integrity through database-level constraints.
+
+## Technology Stack
+
+- **Framework**: Ruby on Rails 8.0
+- **Database**: PostgreSQL
+- **Testing**: RSpec, FactoryBot, Shoulda Matchers
+- **Ruby Version**: 3.2.2
+- **Background Jobs**: Solid Queue with Mission Control Jobs UI
+
+
+## API Endpoints
+
+### Health Check
+
+- `GET /up` - Comprehensive system health check with beautiful web interface
+  - HTML: Interactive dashboard (default)
+  - JSON: Machine-readable status data
+  - Text: Plain text status report
+
+### Restaurants
+
+- `GET /restaurants` - List all restaurants
+- `GET /restaurants/:id` - Get restaurant details with menus and items
+- `GET /restaurants/:id/menus` - Get all menus for a restaurant
+- `GET /restaurants/:id/menu_items` - Get all menu items for a restaurant
+
+### Menus
+
+- `GET /menus` - List all menus
+- `GET /menus/:id` - Get menu details with items and prices
+
+### Menu Items
+
+- `GET /menu_items` - List all menu items
+- `GET /menu_items/:id` - Get menu item details
+
+### Import
+
+- `POST /import` - Import JSON data from request body (asynchronous)
+- `POST /import/upload` - Import JSON data from file upload (asynchronous)
+- `GET /import/status/:job_id` - Detailed job status with logs for each menu item
+
+## Implementation Levels
+
+### Level 1: Basic Menu Management
+
+**Features Implemented:**
+- Menu and MenuItem models with one-to-many relationship
+- Basic CRUD endpoints for menus and menu items
+- Price handling through the join table
+- Comprehensive unit tests for models and controllers
+
+**Key Design Decisions:**
+- Used join table (menu_menu_items) to handle pricing variations
+- Price belongs to the relationship, not the menu item itself
+- Basic validation and error handling
+
+### Level 2: Multiple Restaurants and Menus
+
+**Features Implemented:**
+- Restaurant model with multiple menus
+- Nested routing structure for better API organization
+- Database-level uniqueness constraints
+- Support for menu items appearing in multiple menus with different prices
+
+**Key Design Decisions:**
+- Nested resources for intuitive API structure
+- Database-level uniqueness for data integrity
+- Maintained backward compatibility with global endpoints
+
+### Level 3: JSON Import System
+
+**Features Implemented:**
+- HTTP endpoints for JSON import (body and file upload)
+- Service object for business logic separation
+- Transaction safety with automatic rollback on errors
+- Duplicate consolidation within menus
+- Comprehensive logging and error handling
+- Support for both 'menu_items' and 'dishes' keys in JSON
+
+**Key Design Decisions:**
+- Service object pattern for complex import logic
+- Transaction safety prevents partial imports
+- Flexible JSON key mapping for future extensibility
+- Idempotent operations (re-importing updates existing records)
+
+## JSON Import Format
+
+The API accepts JSON data in the following format:
+
+```json
+{
+  "restaurants": [
+    {
+      "name": "Restaurant Name",
+      "menus": [
+        {
+          "name": "Menu Name",
+          "menu_items": [
+            {
+              "name": "Item Name",
+              "price": 9.99
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 
-## API Usage Examples
+**Alternative Keys:**
+- `dishes` can be used instead of `menu_items`
 
-### Import JSON Data (Asynchronous)
+**Import Features:**
+- Automatic duplicate consolidation within menus
+- Transaction safety with rollback on errors
+- Detailed logging for each operation and menu item
+- Error reporting with specific failure reasons
+- **File size limit**: Maximum 5MB per import (project design decision)
+- **Asynchronous processing**: Background job processing for better performance
+- **Real-time status**: Check import progress via job ID with detailed logs
+- **Complete item tracking**: Logs for each menu item processed with status and details
 
+## Testing
+
+The project includes comprehensive testing:
+
+- **Unit Tests**: Model validations, associations, and business logic
+- **Controller Tests**: API endpoint behavior and error handling
+- **Integration Tests**: End-to-end workflow testing
+- **Service Tests**: Import service functionality and edge cases
+
+**Test Coverage:**
+- All models have validation and association tests
+- All controllers have request and response tests
+- Import service has comprehensive error handling tests
+- Integration tests cover complete user workflows
+
+## Health Check & Monitoring
+
+The application provides a comprehensive health check endpoint at `/up` that offers:
+
+- **Real-time System Status**: Database connectivity, background jobs, and system resources
+- **Beautiful Web Interface**: Modern, responsive dashboard with auto-refresh
+- **Multiple Formats**: HTML (default), JSON, and plain text responses
+- **Status Indicators**: Color-coded health status (healthy/degraded/unhealthy)
+- **System Information**: Version details, resource usage, and uptime
+
+### Quick Health Check
 ```bash
-# Import from request body (returns job ID immediately)
-curl -X POST http://localhost:3000/import \
-  -H "Content-Type: application/json" \
-  -d @restaurant_data.json
+# Web interface (default)
+curl http://localhost:3000/up
 
-# Response:
-# {
-#   "success": true,
-#   "message": "Import job enqueued successfully",
-#   "job_id": "abc123",
-#   "status": "processing",
-#   "check_status_command": "curl http://localhost:3000/import/status/abc123"
-# }
+# JSON response for monitoring tools
+curl -H "Accept: application/json" http://localhost:3000/up
 
-# Import from file upload (returns job ID immediately)
-curl -X POST http://localhost:3000/import/upload \
-  -F "file=@restaurant_data.json"
-
-# Response:
-# {
-#   "success": true,
-#   "message": "Import job enqueued successfully",
-#   "job_id": "abc123",
-#   "status": "processing",
-#   "check_status_command": "curl http://localhost:3000/import/status/abc123"
-# }
-
-# Check import status (copy and paste the command from the response)
-curl http://localhost:3000/import/status/abc123
-
-# Response:
-# {
-#   "success": true,
-#   "job_id": "abc123",
-#   "status": {
-#     "state": "processing",
-#     "message": "Job is being processed asynchronously. Check application logs for completion details."
-#   }
-# }
-
-# Monitor jobs via Mission Control Jobs UI
-# Open http://localhost:3000/jobs in your browser
-# Username: test, Password: password
+# Plain text for scripts
+curl -H "Accept: text/plain" http://localhost:3000/up
 ```
 
-### Get Restaurant Data
+For detailed documentation, see [Health Check Documentation](docs/health_check.md).
 
-```bash
-# Get all restaurants
-curl http://localhost:3000/restaurants
+## Background Job Management
 
-# Get specific restaurant with menus and items
-curl http://localhost:3000/restaurants/1
+The application uses **Solid Queue** for background job processing and **Mission Control Jobs** for a web-based job management interface.
 
-# Get restaurant menus
-curl http://localhost:3000/restaurants/1/menus
+### Mission Control Jobs UI
 
-# Get restaurant menu items
-curl http://localhost:3000/restaurants/1/menu_items
-```
+Access the job management interface at `/jobs` to monitor and manage background jobs:
+
+- **Queues Tab**: View all job queues and their status
+- **In-Progress Jobs**: Monitor currently running jobs
+- **Failed Jobs**: Inspect, retry, or discard failed jobs
+- **Workers Tab**: Monitor job workers and their status
+- **Job Details**: Inspect individual job information and arguments
+
+### Accessing Mission Control Jobs
+
+The interface is protected with HTTP Basic Authentication:
+- **Username**: `test`
+- **Password**: `password`
+
+### Job Management Features
+
+- **Real-time Monitoring**: Live updates of job status and progress
+- **Bulk Operations**: Retry or discard multiple failed jobs at once
+- **Job Filtering**: Filter jobs by queue name, job class, and status
+- **Queue Pausing**: Pause/unpause queues to control job processing
+
+
+## Performance Testing
+
+The project includes performance testing scripts to evaluate the import service with different JSON sizes:
+
+- **`quick_performance_test.rb`**: Quick test for different file sizes (100KB to 4MB)
+- **`benchmark_upload_performance.rb`**: Comprehensive benchmark with detailed analysis
+
+These scripts help identify performance characteristics and potential optimizations for the import service.
 
 ## Error Handling
 
@@ -570,6 +502,7 @@ The current implementation provides a solid foundation for:
 
 ### Common URLs
 - **API Base**: http://localhost:3000
+- **Swagger Documentation**: http://localhost:3000/api-docs
 - **Mission Control Jobs**: http://localhost:3000/jobs (test/password)
 - **PostgreSQL**: localhost:5433 (Docker) / localhost:5432 (Manual)
 
